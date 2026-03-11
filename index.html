@@ -14,30 +14,50 @@ body {
     align-items: center;
     min-height: 100vh;
     padding: 30px 20px;
+    gap: 16px;
 }
 
-.top-bar {
-    display: flex;
-    gap: 8px;
+/* ── URL блок ── */
+.section {
     width: 100%;
     max-width: 960px;
-    margin-bottom: 16px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    overflow: hidden;
 }
 
-.top-bar input {
+.section-header {
+    padding: 10px 16px;
+    background: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.url-row {
+    display: flex;
+    gap: 8px;
+    padding: 14px;
+}
+
+.url-row input {
     flex: 1;
     padding: 10px 14px;
     font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 4px;
     outline: none;
-    background: #fff;
     color: #111;
 }
 
-.top-bar input:focus { border-color: #888; }
+.url-row input:focus { border-color: #888; }
 
-.top-bar button {
+.btn {
     padding: 10px 20px;
     font-size: 14px;
     border: 1px solid #bbb;
@@ -45,277 +65,240 @@ body {
     background: #fff;
     color: #111;
     cursor: pointer;
+    white-space: nowrap;
+}
+.btn:hover { background: #f0f0f0; }
+.btn.danger { color: #c0392b; border-color: #e0b0b0; }
+.btn.danger:hover { background: #fdf0f0; }
+
+/* ── Cookie блок ── */
+.cookie-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto auto;
+    gap: 8px;
+    padding: 14px;
+    border-bottom: 1px solid #eee;
+    align-items: end;
 }
 
-.top-bar button:hover { background: #f0f0f0; }
-
-.browser-window {
-    width: 100%;
-    max-width: 960px;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    overflow: hidden;
+.field {
     display: flex;
     flex-direction: column;
-    min-height: 540px;
+    gap: 5px;
 }
 
-.browser-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
-    background: #f0f0f0;
-    border-bottom: 1px solid #ccc;
+.field label {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.dots { display: flex; gap: 5px; flex-shrink: 0; }
-.dot { width: 11px; height: 11px; border-radius: 50%; }
-.dot.red    { background: #ff5f57; }
-.dot.yellow { background: #febc2e; }
-.dot.green  { background: #28c840; }
-
-.url-bar {
-    flex: 1;
-    background: #fff;
+.field input, .field select {
+    padding: 8px 10px;
+    font-size: 13px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    padding: 4px 10px;
-    font-size: 13px;
-    color: #333;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.open-direct {
-    flex-shrink: 0;
-    padding: 4px 12px;
-    font-size: 12px;
-    border: 1px solid #bbb;
-    border-radius: 4px;
+    outline: none;
+    color: #111;
     background: #fff;
-    color: #333;
-    cursor: pointer;
-    text-decoration: none;
-    display: none;
-    white-space: nowrap;
 }
-.open-direct:hover { background: #f0f0f0; }
 
-.close-btn {
+.field input:focus { border-color: #888; }
+
+.cookie-table-wrap {
+    padding: 0 14px 14px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 14px;
+}
+
+th {
+    text-align: left;
+    padding: 7px 10px;
+    border-bottom: 1px solid #ddd;
+    color: #888;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #222;
+    vertical-align: middle;
+    word-break: break-all;
+}
+
+tr:last-child td { border-bottom: none; }
+
+td.del-cell {
+    width: 36px;
+    text-align: center;
+}
+
+.del-btn {
     background: none;
     border: none;
+    color: #ccc;
     font-size: 16px;
-    color: #888;
     cursor: pointer;
     padding: 2px 6px;
     border-radius: 3px;
     line-height: 1;
 }
-.close-btn:hover { background: #ddd; color: #333; }
+.del-btn:hover { background: #fdf0f0; color: #c0392b; }
 
-.browser-body {
-    flex: 1;
-    position: relative;
-    min-height: 480px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.browser-body iframe {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    border: none;
-}
-
-.placeholder {
-    color: #aaa;
-    font-size: 14px;
+.empty-row td {
+    color: #bbb;
     text-align: center;
-    user-select: none;
+    padding: 20px;
+    font-size: 13px;
 }
 
-/* Спиннер */
-.loader {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-    color: #999;
-    font-size: 14px;
-}
-
-.spinner {
-    width: 32px;
-    height: 32px;
-    border: 3px solid #ddd;
-    border-top-color: #888;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* Ошибка */
-.blocked-msg {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    text-align: center;
-    color: #444;
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-.blocked-msg .icon { font-size: 36px; }
-
-.blocked-msg a {
+.tag {
     display: inline-block;
-    padding: 8px 20px;
-    border: 1px solid #bbb;
-    border-radius: 4px;
-    background: #fff;
-    color: #111;
-    text-decoration: none;
-    font-size: 14px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 11px;
+    background: #f0f0f0;
+    color: #555;
 }
-
-.blocked-msg a:hover { background: #f0f0f0; }
 </style>
 </head>
 <body>
 
-<div class="top-bar">
-    <input id="linkInput" placeholder="https://example.com"
-           onkeydown="if(event.key==='Enter') go()">
-    <button onclick="go()">Открыть</button>
+<!-- URL секция -->
+<div class="section">
+    <div class="section-header">🌐 Открыть ссылку</div>
+    <div class="url-row">
+        <input id="linkInput" placeholder="https://example.com"
+               onkeydown="if(event.key==='Enter') openLink()">
+        <button class="btn" onclick="openLink()">Открыть в новой вкладке</button>
+    </div>
 </div>
 
-<div class="browser-window">
-    <div class="browser-header">
-        <div class="dots">
-            <div class="dot red"></div>
-            <div class="dot yellow"></div>
-            <div class="dot green"></div>
-        </div>
-        <div class="url-bar" id="urlBar">—</div>
-        <a class="open-direct" id="openDirect" target="_blank">↗ Открыть напрямую</a>
-        <button class="close-btn" onclick="closePage()">✕</button>
+<!-- Cookie Manager -->
+<div class="section">
+    <div class="section-header">
+        🍪 Cookie Manager
+        <button class="btn" onclick="refreshTable()" style="padding:4px 12px;font-size:12px;">↻ Обновить</button>
     </div>
-    <div class="browser-body" id="browserBody">
-        <div class="placeholder" id="placeholder">Введите ссылку и нажмите «Открыть»</div>
-        <div class="loader" id="loader">
-            <div class="spinner"></div>
-            Загрузка...
+
+    <!-- Форма создания -->
+    <div class="cookie-form">
+        <div class="field">
+            <label>Название</label>
+            <input id="cName" placeholder="my_cookie">
         </div>
-        <div class="blocked-msg" id="blockedMsg">
-            <span class="icon">🚫</span>
-            <span>Сайт запрещает встраивание в iframe.<br>Это ограничение самого сайта — обойти нельзя.</span>
-            <a href="#" id="blockedLink" target="_blank">Открыть в новой вкладке →</a>
+        <div class="field">
+            <label>Значение</label>
+            <input id="cValue" placeholder="value123">
         </div>
+        <div class="field">
+            <label>Срок (дней)</label>
+            <input id="cDays" placeholder="30" type="number" min="0" style="width:90px">
+        </div>
+        <div style="padding-bottom:1px">
+            <button class="btn" onclick="addCookie()" style="height:37px">+ Добавить</button>
+        </div>
+    </div>
+
+    <!-- Таблица кук -->
+    <div class="cookie-table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Значение</th>
+                    <th>Домен</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="cookieTable"></tbody>
+        </table>
     </div>
 </div>
 
 <script>
-let currentUrl = "";
-let blockTimer = null;
-
-function go() {
+// ── Открыть ссылку ──
+function openLink() {
     let url = document.getElementById("linkInput").value.trim();
     if (!url) return;
     if (!url.startsWith("http")) url = "https://" + url;
-    currentUrl = url;
-
-    // Сброс
-    clearTimeout(blockTimer);
-    const old = document.querySelector("#browserBody iframe");
-    if (old) old.remove();
-
-    hide("placeholder");
-    hide("blockedMsg");
-    show("loader", "flex");
-
-    document.getElementById("urlBar").textContent = url;
-    document.getElementById("openDirect").href = url;
-    document.getElementById("openDirect").style.display = "inline-block";
-    document.getElementById("blockedLink").href = url;
-
-    // Создаём iframe
-    const iframe = document.createElement("iframe");
-    iframe.src = url;
-    iframe.sandbox = "allow-scripts allow-same-origin allow-forms allow-popups";
-    iframe.style.display = "none";
-
-    iframe.addEventListener("load", function () {
-        clearTimeout(blockTimer);
-        // Пробуем проверить что внутри (сработает только same-origin)
-        let loaded = true;
-        try {
-            const doc = iframe.contentDocument || iframe.contentWindow.document;
-            if (!doc || doc.body === null || doc.body.innerHTML.trim() === "") {
-                loaded = false;
-            }
-        } catch(e) {
-            // Cross-origin — значит что-то загрузилось, показываем
-            loaded = true;
-        }
-
-        hide("loader");
-
-        if (loaded) {
-            iframe.style.display = "block";
-        } else {
-            showBlocked();
-        }
-    });
-
-    iframe.addEventListener("error", function () {
-        clearTimeout(blockTimer);
-        hide("loader");
-        showBlocked();
-    });
-
-    document.getElementById("browserBody").appendChild(iframe);
-
-    // Таймаут 5 сек — если не загрузилось, считаем заблокированным
-    blockTimer = setTimeout(function () {
-        if (iframe.style.display === "none") {
-            hide("loader");
-            showBlocked();
-        }
-    }, 5000);
+    window.open(url, "_blank");
 }
 
-function showBlocked() {
-    const old = document.querySelector("#browserBody iframe");
-    if (old) old.remove();
-    show("blockedMsg", "flex");
+// ── Cookie Manager ──
+function addCookie() {
+    const name  = document.getElementById("cName").value.trim();
+    const value = document.getElementById("cValue").value.trim();
+    const days  = parseInt(document.getElementById("cDays").value) || 30;
+
+    if (!name) { alert("Введите название куки"); return; }
+
+    const expires = new Date();
+    expires.setDate(expires.getDate() + days);
+
+    document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}; expires=${expires.toUTCString()}; path=/`;
+
+    document.getElementById("cName").value = "";
+    document.getElementById("cValue").value = "";
+    document.getElementById("cDays").value = "";
+
+    refreshTable();
 }
 
-function closePage() {
-    clearTimeout(blockTimer);
-    const old = document.querySelector("#browserBody iframe");
-    if (old) old.remove();
-    hide("loader");
-    hide("blockedMsg");
-    show("placeholder", "block");
-    document.getElementById("urlBar").textContent = "—";
-    document.getElementById("openDirect").style.display = "none";
-    document.getElementById("linkInput").value = "";
-    currentUrl = "";
+function deleteCookie(name) {
+    document.cookie = `${encodeURIComponent(name)}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+    refreshTable();
 }
 
-function show(id, type) {
-    document.getElementById(id).style.display = type || "block";
+function getCookies() {
+    if (!document.cookie) return [];
+    return document.cookie.split(";").map(c => {
+        const idx = c.indexOf("=");
+        return {
+            name:  decodeURIComponent(c.slice(0, idx).trim()),
+            value: decodeURIComponent(c.slice(idx + 1).trim())
+        };
+    }).filter(c => c.name);
 }
-function hide(id) {
-    document.getElementById(id).style.display = "none";
+
+function refreshTable() {
+    const cookies = getCookies();
+    const tbody = document.getElementById("cookieTable");
+    const domain = location.hostname || "localhost";
+
+    if (cookies.length === 0) {
+        tbody.innerHTML = `<tr class="empty-row"><td colspan="4">Куки не найдены</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = cookies.map(c => `
+        <tr>
+            <td><strong>${esc(c.name)}</strong></td>
+            <td>${esc(c.value)}</td>
+            <td><span class="tag">${domain}</span></td>
+            <td class="del-cell">
+                <button class="del-btn" onclick="deleteCookie('${esc(c.name)}')" title="Удалить">✕</button>
+            </td>
+        </tr>
+    `).join("");
 }
+
+function esc(s) {
+    return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+// Инит
+refreshTable();
 </script>
 
 </body>
