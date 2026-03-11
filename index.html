@@ -35,9 +35,7 @@ body {
     color: #111;
 }
 
-.top-bar input:focus {
-    border-color: #888;
-}
+.top-bar input:focus { border-color: #888; }
 
 .top-bar button {
     padding: 10px 20px;
@@ -47,12 +45,9 @@ body {
     background: #fff;
     color: #111;
     cursor: pointer;
-    transition: background 0.15s;
 }
 
-.top-bar button:hover {
-    background: #f0f0f0;
-}
+.top-bar button:hover { background: #f0f0f0; }
 
 .browser-window {
     width: 100%;
@@ -75,18 +70,8 @@ body {
     border-bottom: 1px solid #ccc;
 }
 
-.dots {
-    display: flex;
-    gap: 5px;
-    flex-shrink: 0;
-}
-
-.dot {
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-}
-
+.dots { display: flex; gap: 5px; flex-shrink: 0; }
+.dot { width: 11px; height: 11px; border-radius: 50%; }
 .dot.red    { background: #ff5f57; }
 .dot.yellow { background: #febc2e; }
 .dot.green  { background: #28c840; }
@@ -104,6 +89,21 @@ body {
     text-overflow: ellipsis;
 }
 
+.open-direct {
+    flex-shrink: 0;
+    padding: 4px 12px;
+    font-size: 12px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+    text-decoration: none;
+    display: none;
+    white-space: nowrap;
+}
+.open-direct:hover { background: #f0f0f0; }
+
 .close-btn {
     background: none;
     border: none;
@@ -114,11 +114,7 @@ body {
     border-radius: 3px;
     line-height: 1;
 }
-
-.close-btn:hover {
-    background: #ddd;
-    color: #333;
-}
+.close-btn:hover { background: #ddd; color: #333; }
 
 .browser-body {
     flex: 1;
@@ -132,8 +128,7 @@ body {
 .browser-body iframe {
     position: absolute;
     top: 0; left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     border: none;
 }
 
@@ -141,20 +136,56 @@ body {
     color: #aaa;
     font-size: 14px;
     text-align: center;
-    line-height: 2;
     user-select: none;
 }
 
-.error-msg {
+/* Спиннер */
+.loader {
     display: none;
-    color: #c0392b;
-    font-size: 13px;
-    text-align: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    color: #999;
+    font-size: 14px;
 }
 
-.error-msg a {
-    color: #333;
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #ddd;
+    border-top-color: #888;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
 }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Ошибка */
+.blocked-msg {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+    color: #444;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.blocked-msg .icon { font-size: 36px; }
+
+.blocked-msg a {
+    display: inline-block;
+    padding: 8px 20px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    background: #fff;
+    color: #111;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.blocked-msg a:hover { background: #f0f0f0; }
 </style>
 </head>
 <body>
@@ -173,44 +204,117 @@ body {
             <div class="dot green"></div>
         </div>
         <div class="url-bar" id="urlBar">—</div>
+        <a class="open-direct" id="openDirect" target="_blank">↗ Открыть напрямую</a>
         <button class="close-btn" onclick="closePage()">✕</button>
     </div>
     <div class="browser-body" id="browserBody">
         <div class="placeholder" id="placeholder">Введите ссылку и нажмите «Открыть»</div>
-        <div class="error-msg" id="errorMsg">
-            Сайт не поддерживает встраивание. &nbsp;
-            <a href="#" id="directLink" target="_blank">Открыть в новой вкладке →</a>
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            Загрузка...
+        </div>
+        <div class="blocked-msg" id="blockedMsg">
+            <span class="icon">🚫</span>
+            <span>Сайт запрещает встраивание в iframe.<br>Это ограничение самого сайта — обойти нельзя.</span>
+            <a href="#" id="blockedLink" target="_blank">Открыть в новой вкладке →</a>
         </div>
     </div>
 </div>
 
 <script>
+let currentUrl = "";
+let blockTimer = null;
+
 function go() {
     let url = document.getElementById("linkInput").value.trim();
     if (!url) return;
     if (!url.startsWith("http")) url = "https://" + url;
+    currentUrl = url;
 
-    document.getElementById("placeholder").style.display = "none";
-    document.getElementById("errorMsg").style.display = "none";
-
+    // Сброс
+    clearTimeout(blockTimer);
     const old = document.querySelector("#browserBody iframe");
     if (old) old.remove();
 
+    hide("placeholder");
+    hide("blockedMsg");
+    show("loader", "flex");
+
+    document.getElementById("urlBar").textContent = url;
+    document.getElementById("openDirect").href = url;
+    document.getElementById("openDirect").style.display = "inline-block";
+    document.getElementById("blockedLink").href = url;
+
+    // Создаём iframe
     const iframe = document.createElement("iframe");
     iframe.src = url;
     iframe.sandbox = "allow-scripts allow-same-origin allow-forms allow-popups";
+    iframe.style.display = "none";
+
+    iframe.addEventListener("load", function () {
+        clearTimeout(blockTimer);
+        // Пробуем проверить что внутри (сработает только same-origin)
+        let loaded = true;
+        try {
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+            if (!doc || doc.body === null || doc.body.innerHTML.trim() === "") {
+                loaded = false;
+            }
+        } catch(e) {
+            // Cross-origin — значит что-то загрузилось, показываем
+            loaded = true;
+        }
+
+        hide("loader");
+
+        if (loaded) {
+            iframe.style.display = "block";
+        } else {
+            showBlocked();
+        }
+    });
+
+    iframe.addEventListener("error", function () {
+        clearTimeout(blockTimer);
+        hide("loader");
+        showBlocked();
+    });
+
     document.getElementById("browserBody").appendChild(iframe);
-    document.getElementById("urlBar").textContent = url;
-    document.getElementById("directLink").href = url;
+
+    // Таймаут 5 сек — если не загрузилось, считаем заблокированным
+    blockTimer = setTimeout(function () {
+        if (iframe.style.display === "none") {
+            hide("loader");
+            showBlocked();
+        }
+    }, 5000);
+}
+
+function showBlocked() {
+    const old = document.querySelector("#browserBody iframe");
+    if (old) old.remove();
+    show("blockedMsg", "flex");
 }
 
 function closePage() {
+    clearTimeout(blockTimer);
     const old = document.querySelector("#browserBody iframe");
     if (old) old.remove();
-    document.getElementById("placeholder").style.display = "block";
-    document.getElementById("errorMsg").style.display = "none";
+    hide("loader");
+    hide("blockedMsg");
+    show("placeholder", "block");
     document.getElementById("urlBar").textContent = "—";
+    document.getElementById("openDirect").style.display = "none";
     document.getElementById("linkInput").value = "";
+    currentUrl = "";
+}
+
+function show(id, type) {
+    document.getElementById(id).style.display = type || "block";
+}
+function hide(id) {
+    document.getElementById(id).style.display = "none";
 }
 </script>
 
